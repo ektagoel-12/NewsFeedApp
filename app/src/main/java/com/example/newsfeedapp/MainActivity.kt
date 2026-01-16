@@ -22,21 +22,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.newsfeedapp.model.News
+import androidx.lifecycle.ViewModelProvider
+import com.example.newsfeedapp.model.Article
 import com.example.newsfeedapp.ui.theme.NewsFeedAppTheme
-import com.example.newsfeedapp.view.NewsScreen
-import com.example.newsfeedapp.viewmodel.HomeViewModel
 
 class MainActivity : ComponentActivity() {
-    private val viewModel : HomeViewModel by viewModels {
-        HomeViewModel.Factory
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        val newsViewModel = ViewModelProvider(this)[NewsViewModel::class.java]
         setContent {
             NewsFeedAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -50,7 +46,7 @@ class MainActivity : ComponentActivity() {
                             fontSize = 25.sp
                         )
 
-                        NewsScreen(viewModel)
+                        NewsScreen(newsViewModel)
                     }
                 }
             }
@@ -60,7 +56,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun NewsCard(news: News){
+fun NewsCard(news:  Article){
     Surface(color= MaterialTheme.colorScheme.primary,
         modifier = Modifier.padding(vertical = 4.dp, horizontal= 8.dp)) {
         Column(modifier =  Modifier
@@ -72,7 +68,7 @@ fun NewsCard(news: News){
                     modifier = Modifier.weight(1f)
                 ){
                     Text(text= news.title)
-                    Text(text= news.date, style = MaterialTheme.typography.headlineSmall.copy(
+                    Text(text= news.publishedAt, style = MaterialTheme.typography.headlineSmall.copy(
                         fontWeight= FontWeight.Thin
                     ))
                 }
@@ -88,7 +84,7 @@ fun NewsCard(news: News){
 }
 
 @Composable
-fun RecyclerView(news: List<News>){
+fun RecyclerView(news: List<Article>){
     LazyColumn(modifier =  Modifier.padding(vertical = 4.dp)) {
         items(news){
             item-> NewsCard(news=item)
